@@ -12,3 +12,36 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        String      @unique @default(uuid())
+  firstName String
+  lastName  String
+  userName  String      @unique // append username once after signup 
+  email     String      @unique
+  role      Role        @default(CONTRIBUTOR)
+  groups    UserGroup[]
+}
+
+model Group {
+  id          String      @unique @default(uuid())
+  name        String
+  description String?
+  users       UserGroup[]
+}
+
+// This is to have a many to many relation
+model UserGroup {
+  groupId String
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+  group   Group  @relation(fields: [groupId], references: [id])
+
+  @@id([userId, groupId])
+}
+
+enum Role {
+  ADMIN
+  MAINTAINER
+  CONTRIBUTOR
+}
