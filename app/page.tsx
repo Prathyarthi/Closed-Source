@@ -1,4 +1,4 @@
-import GithubUserProfile from "@/components/GithubUserProfile";
+import GithubUserProfile from '@/components/GithubUserProfile';
 
 export default async function Home() {
   return (
