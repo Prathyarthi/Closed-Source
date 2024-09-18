@@ -24,10 +24,11 @@ model User {
 }
 
 model Group {
-  id          String      @unique @default(uuid())
-  name        String
-  description String?
-  users       UserGroup[]
+  id           String         @unique @default(uuid())
+  name         String
+  description  String?
+  users        UserGroup[]
+  ProjectGroup ProjectGroup[]
 }
 
 // This is to have a many to many relation
@@ -38,6 +39,22 @@ model UserGroup {
   group   Group  @relation(fields: [groupId], references: [id])
 
   @@id([userId, groupId])
+}
+
+model Project {
+  id           String         @unique @default(uuid())
+  name         String
+  description  String?
+  ProjectGroup ProjectGroup[]
+}
+
+model ProjectGroup {
+  projectId String
+  groupId   String
+  project   Project @relation(fields: [projectId], references: [id])
+  group     Group   @relation(fields: [groupId], references: [id])
+
+  @@id([groupId, projectId])
 }
 
 enum Role {
