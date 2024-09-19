@@ -14,47 +14,39 @@ datasource db {
 }
 
 model User {
-  id        String      @unique @default(uuid())
+  id        String        @id @default(uuid())
   firstName String
   lastName  String
-  userName  String      @unique // append username once after signup 
-  email     String      @unique
-  role      Role        @default(CONTRIBUTOR)
-  groups    UserGroup[]
-}
+  userName  String        @unique
+  email     String        @unique
+  role      Role          @default(CONTRIBUTOR)
+  groups    GroupMember[]
 
-model Group {
-  id           String         @unique @default(uuid())
-  name         String
-  description  String?
-  users        UserGroup[]
-  ProjectGroup ProjectGroup[]
-}
-
-// This is to have a many to many relation
-model UserGroup {
-  groupId String
-  userId  String
-  user    User   @relation(fields: [userId], references: [id])
-  group   Group  @relation(fields: [groupId], references: [id])
-
-  @@id([userId, groupId])
-}
-
-model Project {
-  id           String         @unique @default(uuid())
-  name         String
-  description  String?
-  ProjectGroup ProjectGroup[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ProjectGroup {
-  projectId String
-  groupId   String
-  project   Project @relation(fields: [projectId], references: [id])
-  group     Group   @relation(fields: [groupId], references: [id])
+  id          String        @id @default(uuid())
+  name        String
+  description String
+  members     GroupMember[]
+  maintainer  String
 
-  @@id([groupId, projectId])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GroupMember {
+  id        String       @id @default(uuid())
+  groupId   String
+  group     ProjectGroup @relation(fields: [groupId], references: [id])
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
+  role      String
+  
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 }
 
 enum Role {
