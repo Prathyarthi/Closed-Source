@@ -17,7 +17,7 @@ export async function POST(req: Request) {
         return NextResponse.json({
             group
         }, { status: 201 });
-
+ 
     } catch (error) {
         return NextResponse.json({ error: 'Unable to create group' }, { status: 500 });
     }
