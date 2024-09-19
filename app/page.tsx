@@ -1,9 +1,9 @@
-import GithubUserProfile from '@/components/GithubUserProfile';
+import {NavbarDemo} from '@/components/Navbar';
 
 export default async function Home() {
   return (
-    <div>
-      <GithubUserProfile />
+    <div className='max-w-7xl mx-auto'>
+      Hey there!
     </div>
   );
 }
