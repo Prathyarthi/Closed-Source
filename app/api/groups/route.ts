@@ -1,24 +1,29 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 import prisma from '@/db/index';
 
 export async function POST(req: Request) {
-    try {
-        const body = await req.json();
-        const { name, description, maintainerId } = body;
+  try {
+    const body = await req.json();
+    const { name, description, maintainerId } = body;
 
-        const group = await prisma.projectGroup.create({
-            data: {
-                name,
-                description,
-                maintainer: maintainerId
-            }
-        })
+    const group = await prisma.projectGroup.create({
+      data: {
+        name,
+        description,
+        maintainer: maintainerId,
+      },
+    });
 
-        return NextResponse.json({
-            group
-        }, { status: 201 });
- 
-    } catch (error) {
-        return NextResponse.json({ error: 'Unable to create group' }, { status: 500 });
-    }
+    return NextResponse.json(
+      {
+        group,
+      },
+      { status: 201 },
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Unable to create group' },
+      { status: 500 },
+    );
+  }
 }

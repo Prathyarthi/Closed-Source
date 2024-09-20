@@ -1,33 +1,28 @@
-"use client";
-import React, { useState } from "react";
-import { Menu, MenuItem, } from "@/components/ui/navbar-menu";
-import { cn } from "@/lib/utils";
-import { ModeToggle } from "./ui/ModeToggle";
-import Link from "next/link";
+'use client';
+import React, { useState } from 'react';
+import { cn } from '@/lib/utils';
+import { ModeToggle } from './ui/ModeToggle';
+import Link from 'next/link';
 
-export function NavbarDemo() {
-    return (
-        <div className="relative w-full flex items-center justify-center">
-            <Navbar className="top-2" />
+export function Navbar({ className }: { className?: string }) {
+  const [active, setActive] = useState<string | null>(null);
+  return (
+    <div
+      className={cn(
+        'wrapper sticky top-0 z-50 mx-auto flex w-full items-center gap-2 py-6',
+        className,
+      )}
+    >
+      <div className="mx-auto flex w-full items-center justify-between rounded-2xl border border-primary/10 bg-secondary/15 p-6 shadow-lg shadow-neutral-600/5 backdrop-blur-lg">
+        <div className="flex space-x-6">
+          <Link href="/">Home</Link>
+          <Link href="/">Contributions</Link>
+          <Link href="/">Projects</Link>
         </div>
-    );
-}
-
-function Navbar({ className }: { className?: string }) {
-    const [active, setActive] = useState<string | null>(null);
-    return (
-        <div
-            className={cn("fixed top-10 inset-x-0 max-w-5xl mx-auto z-50", className)}
-        >
-            <Menu setActive={setActive}>
-                <Link href="/">Home</Link>
-                <Link href="/">About</Link>
-                <Link href="/">Contact</Link>
-                <div className="flex items-center">
-                    <ModeToggle />
-                    User
-                </div>
-            </Menu>
+        <div className="flex items-center">
+          <ModeToggle />
         </div>
-    );
+      </div>
+    </div>
+  );
 }

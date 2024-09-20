@@ -1,11 +1,14 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Poppins } from 'next/font/google';
 import './globals.css';
 import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from '@/components/theme-provider';
-import { NavbarDemo } from '@/components/Navbar';
+import { Navbar } from '@/components/Navbar';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Poppins({
+  subsets: ['latin'],
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+});
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -21,9 +24,12 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={inter.className}>
-          <ThemeProvider attribute='class' defaultTheme='dark' enableSystem
-            disableTransitionOnChange>
-            <NavbarDemo />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
             {children}
           </ThemeProvider>
         </body>
