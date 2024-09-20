@@ -1,4 +1,4 @@
-import Landing from '@/screens/Landing';
+import Landing from '@/pages/Landing';
 
 export default async function Home() {
   return (
