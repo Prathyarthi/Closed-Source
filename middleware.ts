@@ -10,8 +10,7 @@ export async function middleware(request: NextRequest) {
   // If the user is authenticated and tries to access the sign-in or sign-up page, redirect to dashboard
   if (
     token &&
-    (url.pathname.startsWith('/sign-in') ||
-      url.pathname.startsWith('/sign-up'))
+    (url.pathname.startsWith('/sign-in') || url.pathname.startsWith('/sign-up'))
   ) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
