@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { signIn, signOut } from 'next-auth/react';
 import { cn } from '@/lib/utils';
 import { ModeToggle } from './ui/ModeToggle';
 import Link from 'next/link';
@@ -54,13 +55,18 @@ export function Navbar({ className }: { className?: string }) {
         <div className="flex items-center space-x-3">
           <ModeToggle />
           <Link href="/sign-in">
-            <div
-              className={cn(
-                active === 'sign-in' ? 'text-blue-200' : 'text-gray-100',
-              )}
+            <button
+              onClick={() => signIn('github')}
+              className="rounded-full bg-gray-800 px-4 py-2 text-white hover:bg-gray-700"
             >
-              Sign In
-            </div>
+              Sign in
+            </button>
+            <button
+              onClick={() => signOut()}
+              className="rounded-full bg-gray-800 px-4 py-2 text-white hover:bg-gray-700"
+            >
+              sign out
+            </button>
           </Link>
         </div>
       </div>
