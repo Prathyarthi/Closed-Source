@@ -58,3 +58,5 @@ const GroupsPage = () => {
     </div>
   );
 };
+
+export default GroupsPage;
