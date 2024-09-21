@@ -1,7 +1,6 @@
 'use client';
 
 import { getUser } from '@/lib/actions/user.actions';
-import { UserButton } from '@clerk/nextjs';
 import axios from 'axios';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';

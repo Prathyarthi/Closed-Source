@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
 import './globals.css';
-import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Navbar } from '@/components/Navbar';
+import { Providers } from './providers';
 
 const inter = Poppins({
   subsets: ['latin'],
@@ -21,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en">
+    <html lang="en">
+      <Providers>
         <body className={inter.className}>
           <ThemeProvider
             attribute="class"
@@ -30,10 +30,11 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <Navbar />
             {children}
           </ThemeProvider>
         </body>
-      </html>
-    </ClerkProvider>
+      </Providers>
+    </html>
   );
 }

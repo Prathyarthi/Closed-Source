@@ -11,7 +11,6 @@ function CreateGroup() {
 
   const createGroup = async () => {
     try {
-
       const res = await axiosInstance.post('/api/groups', {
         name,
         description,
@@ -21,9 +20,7 @@ function CreateGroup() {
       if (res.status === 201) {
         router.push('/dashboard/groups');
       }
-    } catch (error) {
-
-    }
+    } catch (error) {}
   };
 
   return (

@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { ModeToggle } from './ui/ModeToggle';
 import Link from 'next/link';
-
 export function Navbar({ className }: { className?: string }) {
   const [active, setActive] = useState<string | null>(null);
 
@@ -52,8 +51,17 @@ export function Navbar({ className }: { className?: string }) {
             </div>
           </Link>
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center space-x-3">
           <ModeToggle />
+          <Link href="/sign-in">
+            <div
+              className={cn(
+                active === 'sign-in' ? 'text-blue-200' : 'text-gray-100',
+              )}
+            >
+              Sign In
+            </div>
+          </Link>
         </div>
       </div>
     </div>

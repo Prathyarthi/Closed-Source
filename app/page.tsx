@@ -1,9 +1,9 @@
-import Landing from '@/pages/Landing';
-
 export default async function Home() {
   return (
     <main>
-      <Landing />
+      <div className="flex min-h-screen items-center justify-center">
+        <h1>Hello welcome to Closed Source</h1>
+      </div>
     </main>
   );
 }
