@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { signIn, signOut } from 'next-auth/react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import { cn } from '@/lib/utils';
 import { ModeToggle } from './ui/ModeToggle';
 import Link from 'next/link';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 export function Navbar({ className }: { className?: string }) {
   const [active, setActive] = useState<string | null>(null);
+  const { data: session } = useSession();
 
   const handleSetActive = (link: string) => {
     setActive(link);
@@ -54,20 +56,25 @@ export function Navbar({ className }: { className?: string }) {
         </div>
         <div className="flex items-center space-x-3">
           <ModeToggle />
-          <Link href="/sign-in">
-            <button
-              onClick={() => signIn('github')}
-              className="rounded-full bg-gray-800 px-4 py-2 text-white hover:bg-gray-700"
+          <Avatar>
+            <AvatarImage src={session?.user?.image} alt="avatar" />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+          {!session ? (
+            <Link
+              href={'/sign-in'}
+              className="rounded-full bg-blue-500 px-4 py-2 text-white"
             >
               Sign in
-            </button>
+            </Link>
+          ) : (
             <button
               onClick={() => signOut()}
-              className="rounded-full bg-gray-800 px-4 py-2 text-white hover:bg-gray-700"
+              className="rounded-full bg-blue-500 px-4 py-2 text-white"
             >
-              sign out
+              Sign out
             </button>
-          </Link>
+          )}
         </div>
       </div>
     </div>

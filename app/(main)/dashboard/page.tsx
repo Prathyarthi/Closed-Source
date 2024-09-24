@@ -1,13 +1,41 @@
-import React from 'react';
+// import React from 'react';
 
-const page = () => {
+// const page = () => {
+//   return (
+//     <main>
+//       <div className="flex h-[80vh] items-center justify-center text-4xl">
+//         <h1>This is dashboard</h1>
+//       </div>
+//     </main>
+//   );
+// };
+
+// export default page;
+
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { signOut, useSession } from 'next-auth/react';
+
+const Home = () => {
+  const { data: session } = useSession();
+  const [data, setData] = useState('');
+  const [image, setImage] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (session) {
+      setData(JSON.stringify(session.user, null, 2));
+      setImage(session.user.image);
+    }
+  }, [session]);
+
   return (
-    <main>
-      <div className="flex h-[80vh] items-center justify-center text-4xl">
-        <h1>This is dashboard</h1>
-      </div>
-    </main>
+    <div className="">
+      <pre>{data}</pre>
+      <button onClick={() => signOut()}>Sign out</button>
+    </div>
   );
 };
 
-export default page;
+export default Home;

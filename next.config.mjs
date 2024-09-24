@@ -6,6 +6,9 @@ const nextConfig = {
             hostname: 'avatars.githubusercontent.com',
         },
         {
+            hostname: "appx-wsb-gcp.akamai.net.in",
+        },
+        {
             protocol: 'https',
             hostname: 'assets.aceternity.com',
         }]
