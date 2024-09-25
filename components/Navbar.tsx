@@ -5,7 +5,7 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 import { cn } from '@/lib/utils';
 import { ModeToggle } from './ui/ModeToggle';
 import Link from 'next/link';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import UserAccountDropDown from './UserDropDown';
 export function Navbar({ className }: { className?: string }) {
   const [active, setActive] = useState<string | null>(null);
   const { data: session } = useSession();
@@ -26,9 +26,7 @@ export function Navbar({ className }: { className?: string }) {
           <Link href="/" passHref>
             <div
               onClick={() => handleSetActive('home')}
-              className={cn(
-                active === 'home' ? 'text-blue-200' : 'text-gray-100',
-              )}
+              className={cn(active === 'home' ? 'text-blue-300' : '')}
             >
               Home
             </div>
@@ -36,9 +34,7 @@ export function Navbar({ className }: { className?: string }) {
           <Link href="/contributions" passHref>
             <div
               onClick={() => handleSetActive('contributions')}
-              className={cn(
-                active === 'contributions' ? 'text-blue-200' : 'text-gray-100',
-              )}
+              className={cn(active === 'contributions' ? 'text-blue-300' : '')}
             >
               Contributions
             </div>
@@ -46,9 +42,7 @@ export function Navbar({ className }: { className?: string }) {
           <Link href="/projects" passHref>
             <div
               onClick={() => handleSetActive('projects')}
-              className={cn(
-                active === 'projects' ? 'text-blue-200' : 'text-gray-100',
-              )}
+              className={cn(active === 'projects' ? 'text-blue-300' : '')}
             >
               Projects
             </div>
@@ -56,10 +50,6 @@ export function Navbar({ className }: { className?: string }) {
         </div>
         <div className="flex items-center space-x-3">
           <ModeToggle />
-          <Avatar>
-            <AvatarImage src={session?.user?.image} alt="avatar" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
           {!session ? (
             <Link
               href={'/sign-in'}
@@ -68,12 +58,15 @@ export function Navbar({ className }: { className?: string }) {
               Sign in
             </Link>
           ) : (
-            <button
-              onClick={() => signOut()}
-              className="rounded-full bg-blue-500 px-4 py-2 text-white"
-            >
-              Sign out
-            </button>
+            <>
+              <UserAccountDropDown />
+              <button
+                onClick={() => signOut()}
+                className="rounded-xl bg-blue-500 px-4 py-2 text-white"
+              >
+                Sign out
+              </button>
+            </>
           )}
         </div>
       </div>
