@@ -60,12 +60,6 @@ export function Navbar({ className }: { className?: string }) {
           ) : (
             <>
               <UserAccountDropDown />
-              <button
-                onClick={() => signOut()}
-                className="rounded-xl bg-blue-500 px-4 py-2 text-white"
-              >
-                Sign out
-              </button>
             </>
           )}
         </div>
