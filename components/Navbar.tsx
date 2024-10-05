@@ -47,6 +47,14 @@ export function Navbar({ className }: { className?: string }) {
               Projects
             </div>
           </Link>
+          <Link href="/groups" passHref>
+            <div
+              onClick={() => handleSetActive('groups')}
+              className={cn(active === 'groups' ? 'text-blue-300' : '')}
+            >
+              Groups
+            </div>
+          </Link>
         </div>
         <div className="flex items-center space-x-3">
           <ModeToggle />
