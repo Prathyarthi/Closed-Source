@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { revalidatePath } from 'next/cache';
 
 export async function fetchProjects() {
-  const projects = await prisma.projectGroup.findMany({
+  const projects = await prisma.group.findMany({
     include: {
       maintainer: true,
     },
@@ -14,18 +14,14 @@ export async function fetchProjects() {
   return projects;
 }
 
-export async function createProject(
-  name: string,
-  description: string,
-  maintainerId: number,
-) {
+export async function createProject(name: string, description: string) {
   const session = await getServerSession();
 
   if (!session?.user) {
     throw new Error('Unauthenticated');
   }
 
-  const project = await prisma.projectGroup.create({
+  const project = await prisma.group.create({
     data: {
       name,
       description,
@@ -38,7 +34,7 @@ export async function createProject(
 }
 
 export async function getProjectById(projectId: string) {
-  const project = await prisma.projectGroup.findUnique({
+  const project = await prisma.group.findUnique({
     where: {
       id: projectId,
     },
@@ -55,7 +51,7 @@ export async function deleteProject(projectId: string) {
     throw new Error('Unauthenticated');
   }
 
-  const project = await prisma.projectGroup.findUnique({
+  const project = await prisma.group.findUnique({
     where: {
       id: projectId,
     },
@@ -65,7 +61,7 @@ export async function deleteProject(projectId: string) {
     throw new Error('Permission denied');
   }
 
-  const deleteProject = await prisma.projectGroup.delete({
+  const deleteProject = await prisma.group.delete({
     where: {
       id: projectId,
     },
