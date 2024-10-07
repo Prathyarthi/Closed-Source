@@ -1,18 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
-import { signIn, signOut, useSession } from 'next-auth/react';
+import React from 'react';
+import { useSession } from 'next-auth/react';
 import { cn } from '@/lib/utils';
 import { ModeToggle } from './ui/ModeToggle';
 import Link from 'next/link';
 import UserAccountDropDown from './UserDropDown';
+import { usePathname } from 'next/navigation';
 export function Navbar({ className }: { className?: string }) {
-  const [active, setActive] = useState<string | null>(null);
+  const pathname = usePathname();
+  // console.log(pathname);
   const { data: session } = useSession();
-
-  const handleSetActive = (link: string) => {
-    setActive(link);
-  };
 
   return (
     <div
@@ -24,34 +22,28 @@ export function Navbar({ className }: { className?: string }) {
       <div className="mx-auto flex w-full items-center justify-between rounded-2xl border border-primary/10 bg-secondary/15 p-6 shadow-lg shadow-neutral-600/5 backdrop-blur-lg">
         <div className="flex space-x-6">
           <Link href="/" passHref>
-            <div
-              onClick={() => handleSetActive('home')}
-              className={cn(active === 'home' ? 'text-blue-300' : '')}
-            >
+            <div className={cn(pathname === '/' ? 'text-blue-300' : '')}>
               Home
             </div>
           </Link>
           <Link href="/contributions" passHref>
             <div
-              onClick={() => handleSetActive('contributions')}
-              className={cn(active === 'contributions' ? 'text-blue-300' : '')}
+              className={cn(
+                pathname === '/contributions' ? 'text-blue-300' : '',
+              )}
             >
               Contributions
             </div>
           </Link>
           <Link href="/projects" passHref>
             <div
-              onClick={() => handleSetActive('projects')}
-              className={cn(active === 'projects' ? 'text-blue-300' : '')}
+              className={cn(pathname === '/projects' ? 'text-blue-300' : '')}
             >
               Projects
             </div>
           </Link>
           <Link href="/groups" passHref>
-            <div
-              onClick={() => handleSetActive('groups')}
-              className={cn(active === 'groups' ? 'text-blue-300' : '')}
-            >
+            <div className={cn(pathname === '/groups' ? 'text-blue-300' : '')}>
               Groups
             </div>
           </Link>

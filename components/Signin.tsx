@@ -17,7 +17,7 @@ const Signin = () => {
     if (redirected.current === false && session.data?.user) {
       const redirectUrl =
         localStorage.getItem('loginRedirectUrl') ||
-        searchParams.get('redirectUrl');
+        searchParams?.get('redirectUrl');
       localStorage.removeItem('loginRedirectUrl');
       router.replace(redirectUrl || '/');
       redirected.current = true;
@@ -36,7 +36,7 @@ const Signin = () => {
               </span>
             </h2>
             <p className="text-lg font-medium tracking-tighter text-primary/75 md:text-xl">
-              Log in to access content!
+              Log in to start contributing!
             </p>
           </div>
           <div className="flex flex-col gap-4">

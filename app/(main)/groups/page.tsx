@@ -1,8 +1,8 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
-
 import {
   Dialog,
   DialogContent,
@@ -12,31 +12,55 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-
-import { createGroup } from '@/lib/actions/groups.actions';
-import { useState } from 'react';
+import { createGroup, fetchGroups } from '@/lib/actions/groups.actions';
 import { useRouter } from 'next/navigation';
 
 function Groups() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [groups, setGroups] = useState<any>([]);
+  console.log(groups);
 
   const router = useRouter();
 
   const handleCreateGroup = async () => {
     const response = await createGroup(name, description);
-    setGroups([...groups, response]);
     console.log(response);
+
     router.push('/groups');
   };
 
+  const handleFetchGroups = async () => {
+    const res = await fetchGroups();
+    setGroups(res);
+  };
+  useEffect(() => {
+    handleFetchGroups();
+  }, []);
   return (
-    <div className="mx-auto flex min-h-[80vh] max-w-7xl flex-col">
-      <div className="flex justify-end">
+    <div className="mx-auto flex min-h-[80vh] max-w-6xl justify-between">
+      <div className="">
+        <h1 className="text-3xl font-medium text-blue-400">Groups</h1>
+        <div className="flex h-auto w-full items-center justify-center">
+          {groups.length === 0 ? (
+            <h1>No groups</h1>
+          ) : (
+            <div className="flex h-auto flex-col items-center justify-center gap-2">
+              {groups.map((group: any, index: number) => (
+                <div key={index}>
+                  <h2>{group.name}</h2>
+                  <p>{group.description}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="">
         <Dialog>
           <DialogTrigger asChild>
             <Button>
+              <p className="mr-2">Add Group</p>
               <PlusCircle />
             </Button>
           </DialogTrigger>
@@ -59,21 +83,6 @@ function Groups() {
             </DialogHeader>
           </DialogContent>
         </Dialog>
-      </div>
-      <div>
-        <h1>Groups</h1>
-        {groups.length === 0 ? (
-          <h1>No groups</h1>
-        ) : (
-          <div className="flex flex-col gap-2">
-            {groups.map((group: any, index: number) => (
-              <div key={index}>
-                <h2>{group.name}</h2>
-                <p>{group.description}</p>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

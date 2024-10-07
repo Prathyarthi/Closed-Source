@@ -6,7 +6,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { name, description, maintainerId } = body;
 
-    const group = await prisma.projectGroup.create({
+    const group = await prisma.group.create({
       data: {
         name,
         description,
