@@ -24,7 +24,7 @@ function Groups() {
   const router = useRouter();
 
   const handleCreateGroup = async () => {
-    const response = await createGroup(name, description);
+    await createGroup(name, description);
 
     await handleFetchGroups();
 
@@ -45,11 +45,11 @@ function Groups() {
         <div className="">
           <h1 className="text-3xl font-medium text-blue-400">Groups</h1>
         </div>
-        <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button>
-              <p className="mr-2">Add Group</p>
+            <Button className="flex items-center">
               <PlusCircle />
+              <p className="ml-2">Add Group</p>
             </Button>
           </DialogTrigger>
           <DialogContent>
@@ -72,16 +72,30 @@ function Groups() {
           </DialogContent>
         </Dialog>
       </div>
-      <div className="flex min-h-[70vh] items-center justify-center gap-4">
+      <div className="my-10 grid min-h-[70vh] grid-cols-3 justify-center gap-4">
         <div className="">
           {groups.length === 0 ? (
             <h1>No groups</h1>
           ) : (
-            <div className="flex h-auto flex-col items-center justify-center gap-2">
+            <div className="flex h-auto flex-col justify-center gap-2">
               {groups.map((group: any, index: number) => (
-                <div key={index}>
-                  <h2>{group.name}</h2>
-                  <p>{group.description}</p>
+                <div
+                  key={index}
+                  className="space-y-2 rounded-lg border px-4 py-2 shadow-md dark:border-white/[0.2] dark:bg-gray-800"
+                >
+                  <h2 className="text-xl">{group.name}</h2>
+                  <p className="text-sm">{group.description}</p>
+                  <div className="flex items-center justify-between">
+                    <h1 className="text-sm">
+                      created by{' '}
+                      <span className="ml-2 text-muted-foreground">
+                        {group.maintainer.name}
+                      </span>
+                    </h1>
+                    <Button onClick={() => router.push(`/groups/${group.id}`)}>
+                      View
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>

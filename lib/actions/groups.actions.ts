@@ -4,6 +4,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/options';
 import prisma from '@/db';
 import { getServerSession } from 'next-auth';
 import { revalidatePath } from 'next/cache';
+import { use } from 'react';
 
 export async function fetchGroups() {
   try {
@@ -51,7 +52,15 @@ export async function getGroupById(groupId: string) {
       where: {
         id: groupId,
       },
+      select: {
+        id: true,
+        name: true,
+        maintainer: true,
+        members: true,
+        projects: true,
+      },
     });
+    // console.log(group);
 
     if (!group) {
       throw new Error('Group not found');
@@ -99,3 +108,35 @@ export async function deleteGroup(groupId: string) {
     throw new Error('Failed to delete group');
   }
 }
+
+export const addMembersToGroup = async (groupId: string, userId: string) => {
+  try {
+    console.log(userId);
+    console.log(groupId);
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    const members = await prisma?.group.update({
+      where: {
+        id: groupId,
+      },
+      data: {
+        members: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+    });
+    console.log(members);
+
+    revalidatePath('/groups');
+    return members;
+  } catch (error) {
+    console.log(error);
+  }
+};

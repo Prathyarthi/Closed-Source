@@ -4,6 +4,7 @@ import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Navbar } from '@/components/Navbar';
 import { Providers } from './providers';
+import { Toaster } from '@/components/ui/toaster';
 
 const inter = Poppins({
   subsets: ['latin'],
@@ -32,6 +33,7 @@ export default function RootLayout({
           >
             <Navbar />
             {children}
+            <Toaster />
           </ThemeProvider>
         </body>
       </Providers>

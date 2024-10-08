@@ -29,7 +29,7 @@ export function Navbar({ className }: { className?: string }) {
           <Link href="/contributions" passHref>
             <div
               className={cn(
-                pathname === '/contributions' ? 'text-blue-300' : '',
+                pathname?.includes('/contributions') ? 'text-blue-300' : '',
               )}
             >
               Contributions
@@ -37,13 +37,19 @@ export function Navbar({ className }: { className?: string }) {
           </Link>
           <Link href="/projects" passHref>
             <div
-              className={cn(pathname === '/projects' ? 'text-blue-300' : '')}
+              className={cn(
+                pathname?.includes('/projects') ? 'text-blue-300' : '',
+              )}
             >
               Projects
             </div>
           </Link>
           <Link href="/groups" passHref>
-            <div className={cn(pathname === '/groups' ? 'text-blue-300' : '')}>
+            <div
+              className={cn(
+                pathname?.includes('/groups') ? 'text-blue-300' : '',
+              )}
+            >
               Groups
             </div>
           </Link>

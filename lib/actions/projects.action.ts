@@ -189,3 +189,36 @@ export async function fetchReviewers(projectId: string) {
     throw new Error('Failed to fetch reviewers');
   }
 }
+export const assignGroupToProject = async (
+  groupId: string,
+  projectId: string,
+) => {
+  // console.log(projectId);
+  // console.log(groupId);
+
+  try {
+    const project = await prisma.project.findUnique({
+      where: {
+        id: projectId,
+      },
+    });
+
+    if (!project) {
+      throw new Error(`Project with ID ${projectId} not found.`);
+    }
+
+    const updatedProject = await prisma.project.update({
+      where: {
+        id: projectId,
+      },
+      data: {
+        groupId: groupId,
+      },
+    });
+
+    return updatedProject;
+  } catch (error) {
+    console.error('Error assigning group to project:', error);
+    throw new Error('Failed to assign group to project');
+  }
+};
