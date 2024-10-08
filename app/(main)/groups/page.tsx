@@ -19,14 +19,16 @@ function Groups() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [groups, setGroups] = useState<any>([]);
-  console.log(groups);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const router = useRouter();
 
   const handleCreateGroup = async () => {
     const response = await createGroup(name, description);
-    console.log(response);
 
+    await handleFetchGroups();
+
+    setIsDialogOpen(false);
     router.push('/groups');
   };
 
@@ -57,7 +59,7 @@ function Groups() {
         </div>
       </div>
       <div className="">
-        <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <p className="mr-2">Add Group</p>

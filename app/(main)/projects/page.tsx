@@ -19,14 +19,16 @@ function Projects() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [projects, setProjects] = useState<any>([]);
-  console.log(projects);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const router = useRouter();
 
   const handleCreateProject = async () => {
     const response = await createProject(name, description);
-    console.log(response);
 
+    await handleFetchProjects();
+
+    setIsDialogOpen(false);
     router.push('/projects');
   };
 
@@ -37,7 +39,7 @@ function Projects() {
 
   useEffect(() => {
     handleFetchProjects();
-  }, [projects]);
+  }, []);
 
   return (
     <div className="mx-auto flex min-h-[80vh] max-w-6xl justify-between">
@@ -59,7 +61,7 @@ function Projects() {
         </div>
       </div>
       <div className="">
-        <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <p className="mr-2">Add Project</p>
