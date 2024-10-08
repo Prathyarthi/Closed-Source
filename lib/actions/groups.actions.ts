@@ -12,8 +12,7 @@ export async function fetchGroups() {
         maintainer: true,
       },
     });
-    // console.log(groups);
-    revalidatePath('/groups');
+
     return groups;
   } catch (error) {
     console.error('Error fetching groups:', error);
@@ -58,7 +57,6 @@ export async function getGroupById(groupId: string) {
       throw new Error('Group not found');
     }
 
-    revalidatePath('/groups');
     return group;
   } catch (error) {
     console.error('Error fetching group:', error);

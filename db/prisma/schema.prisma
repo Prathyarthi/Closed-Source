@@ -27,20 +27,33 @@ model User {
   sessions         Session[]
   Authenticator    Authenticator[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Reviewer  Reviewer[]
 }
 
 model Project {
-  id           String   @id @default(uuid())
+  id           String     @id @default(uuid())
   name         String
   description  String
   groupId      String?
-  group        Group?   @relation(fields: [groupId], references: [id])
+  group        Group?     @relation(fields: [groupId], references: [id])
   maintainerId String
-  maintainer   User     @relation(fields: [maintainerId], references: [id])
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  maintainer   User       @relation(fields: [maintainerId], references: [id])
+  reviewers    Reviewer[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Reviewer {
+  id        String  @id @default(uuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Group {

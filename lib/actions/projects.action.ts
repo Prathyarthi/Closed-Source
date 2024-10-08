@@ -1,72 +1,191 @@
 'use server';
+import { authOptions } from '@/app/api/auth/[...nextauth]/options';
 import prisma from '@/db';
 import { getServerSession } from 'next-auth';
 import { revalidatePath } from 'next/cache';
 
 export async function fetchProjects() {
-  const projects = await prisma.group.findMany({
-    include: {
-      maintainer: true,
-    },
-  });
+  try {
+    const projects = await prisma.project.findMany({
+      include: {
+        maintainer: true,
+      },
+    });
 
-  revalidatePath('/dashboard/projects');
-  return projects;
+    return projects;
+  } catch (error) {
+    console.error('Error fetching projects:', error);
+    throw new Error('Failed to fetch projects');
+  }
 }
 
 export async function createProject(name: string, description: string) {
-  const session = await getServerSession();
+  try {
+    const session = await getServerSession(authOptions);
 
-  if (!session?.user) {
-    throw new Error('Unauthenticated');
+    if (!session?.user) {
+      throw new Error('Unauthenticated');
+    }
+
+    const project = await prisma.project.create({
+      data: {
+        name,
+        description,
+        maintainerId: session.user.id,
+      },
+    });
+
+    revalidatePath('/projects');
+    return project;
+  } catch (error) {
+    console.error('Error creating project:', error);
+    throw new Error('Failed to create project');
   }
-
-  const project = await prisma.group.create({
-    data: {
-      name,
-      description,
-      maintainerId: session.user.id,
-    },
-  });
-
-  revalidatePath('/dashboard/projects');
-  return project;
 }
 
 export async function getProjectById(projectId: string) {
-  const project = await prisma.group.findUnique({
-    where: {
-      id: projectId,
-    },
-  });
+  try {
+    const project = await prisma.project.findUnique({
+      where: {
+        id: projectId,
+      },
+    });
 
-  revalidatePath('/dashboard/projects');
-  return project;
+    if (!project) {
+      throw new Error('Project not found');
+    }
+
+    return project;
+  } catch (error) {
+    console.error('Error fetching group:', error);
+    throw new Error('Failed to fetch group');
+  }
 }
 
 export async function deleteProject(projectId: string) {
-  const session = await getServerSession();
+  try {
+    const session = await getServerSession(authOptions);
 
-  if (!session?.user) {
-    throw new Error('Unauthenticated');
+    if (!session?.user) {
+      throw new Error('Unauthenticated');
+    }
+
+    const project = await prisma.project.findUnique({
+      where: {
+        id: projectId,
+      },
+    });
+
+    if (!project) {
+      throw new Error('Project not found');
+    }
+
+    if (project?.maintainerId !== session.user.id) {
+      throw new Error('Permission denied');
+    }
+
+    const deleteProject = await prisma.project.delete({
+      where: {
+        id: projectId,
+      },
+    });
+
+    revalidatePath('/projects');
+    return deleteProject;
+  } catch (error) {
+    console.error('Error deleting group:', error);
+    throw new Error('Failed to delete group');
   }
+}
 
-  const project = await prisma.group.findUnique({
-    where: {
-      id: projectId,
-    },
-  });
+export async function addReviewer(projectId: string, userId: string) {
+  try {
+    const session = await getServerSession(authOptions);
 
-  if (project?.maintainerId !== session.user.id) {
-    throw new Error('Permission denied');
+    if (!session?.user) {
+      throw new Error('Unauthenticated');
+    }
+
+    const project = await prisma.project.findUnique({
+      where: {
+        id: projectId,
+      },
+    });
+
+    if (!project) {
+      throw new Error('Project not found');
+    }
+
+    if (project.maintainerId !== session.user.id) {
+      throw new Error('Permission denied');
+    }
+
+    const addReviewer = await prisma.reviewer.create({
+      data: {
+        projectId,
+        userId,
+      },
+    });
+
+    revalidatePath('/projects');
+    return addReviewer;
+  } catch (error) {
+    console.error('Error creating reviewer:', error);
+    throw new Error('Failed to create reviewer');
   }
+}
 
-  const deleteProject = await prisma.group.delete({
-    where: {
-      id: projectId,
-    },
-  });
+export async function removeReviewer(projectId: string, userId: string) {
+  try {
+    const session = await getServerSession(authOptions);
 
-  revalidatePath('/dashboard/projects');
-  return deleteProject;
+    if (!session?.user) {
+      throw new Error('Unauthenticated');
+    }
+
+    const project = await prisma.project.findUnique({
+      where: {
+        id: projectId,
+      },
+    });
+
+    if (!project) {
+      throw new Error('Project not found');
+    }
+
+    if (project.maintainerId !== session.user.id) {
+      throw new Error('Permission denied');
+    }
+
+    const removeReviewer = await prisma.reviewer.delete({
+      where: {
+        projectId: projectId,
+        userId: userId,
+      },
+    });
+
+    revalidatePath('/projects');
+    return removeReviewer;
+  } catch (error) {
+    console.error('Error deleting reviewer:', error);
+    throw new Error('Failed to delete reviewer');
+  }
+}
+
+export async function fetchReviewers(projectId: string) {
+  try {
+    const reviewers = await prisma.reviewer.findMany({
+      where: {
+        projectId,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    return reviewers;
+  } catch (error) {
+    console.error('Error fetching reviewers:', error);
+    throw new Error('Failed to fetch reviewers');
+  }
 }
