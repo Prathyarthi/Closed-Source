@@ -40,26 +40,12 @@ function Groups() {
     handleFetchGroups();
   }, []);
   return (
-    <div className="mx-auto flex min-h-[80vh] max-w-6xl justify-between">
-      <div className="">
-        <h1 className="text-3xl font-medium text-blue-400">Groups</h1>
-        <div className="flex h-auto w-full items-center justify-center">
-          {groups.length === 0 ? (
-            <h1>No groups</h1>
-          ) : (
-            <div className="flex h-auto flex-col items-center justify-center gap-2">
-              {groups.map((group: any, index: number) => (
-                <div key={index}>
-                  <h2>{group.name}</h2>
-                  <p>{group.description}</p>
-                </div>
-              ))}
-            </div>
-          )}
+    <div className="mx-auto flex h-auto max-w-6xl flex-col justify-between">
+      <div className="flex w-full justify-between">
+        <div className="">
+          <h1 className="text-3xl font-medium text-blue-400">Groups</h1>
         </div>
-      </div>
-      <div className="">
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog>
           <DialogTrigger asChild>
             <Button>
               <p className="mr-2">Add Group</p>
@@ -85,6 +71,22 @@ function Groups() {
             </DialogHeader>
           </DialogContent>
         </Dialog>
+      </div>
+      <div className="flex min-h-[70vh] items-center justify-center gap-4">
+        <div className="">
+          {groups.length === 0 ? (
+            <h1>No groups</h1>
+          ) : (
+            <div className="flex h-auto flex-col items-center justify-center gap-2">
+              {groups.map((group: any, index: number) => (
+                <div key={index}>
+                  <h2>{group.name}</h2>
+                  <p>{group.description}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
