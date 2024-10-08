@@ -36,7 +36,7 @@ function Groups() {
   };
   useEffect(() => {
     handleFetchGroups();
-  }, []);
+  }, [groups]);
   return (
     <div className="mx-auto flex min-h-[80vh] max-w-6xl justify-between">
       <div className="">

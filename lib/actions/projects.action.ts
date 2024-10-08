@@ -157,10 +157,10 @@ export async function removeReviewer(projectId: string, userId: string) {
       throw new Error('Permission denied');
     }
 
-    const removeReviewer = await prisma.reviewer.delete({
+    const removeReviewer = await prisma.reviewer.deleteMany({
       where: {
-        projectId: projectId,
-        userId: userId,
+        projectId,
+        userId,
       },
     });
 
