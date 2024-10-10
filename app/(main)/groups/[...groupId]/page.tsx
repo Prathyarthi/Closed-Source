@@ -4,7 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { addMembersToGroup, getGroupById } from '@/lib/actions/groups.actions'; // Ensure this function fetches group details
 import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { fetchUsersOfParticularGroup } from '@/lib/actions/user.actions';
+import {
+  fetchUsers,
+  fetchUsersOfParticularGroup,
+  removeUserFromGroup,
+} from '@/lib/actions/user.actions';
 import {
   Dialog,
   DialogContent,
@@ -13,7 +17,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 
 const GroupDetailPage = () => {
   const params = useParams();
@@ -24,6 +27,7 @@ const GroupDetailPage = () => {
   const [group, setGroup] = useState<any>(null);
 
   const [users, setUsers] = useState<any>(null);
+  const [groupUsers, setGroupUsers] = useState<any>(null);
   // const [members, setMembers] = useState<any>(null);
   const [loading, setLoading] = useState<Boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,6 +45,16 @@ const GroupDetailPage = () => {
     }
   };
 
+  const handleUserDelete = async (groupId: string, userId: string) => {
+    try {
+      const member = await removeUserFromGroup(groupId, userId);
+      // setGroup(member);
+      console.log(member);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const getGroupDetails = async () => {
       if (id) {
@@ -49,10 +63,13 @@ const GroupDetailPage = () => {
           console.log('Fetched group details:', groupDetails); // Debugging
           setGroup(groupDetails);
 
-          const userList = await fetchUsersOfParticularGroup(id);
-          console.log('userList', userList);
+          const groupUsersList = await fetchUsersOfParticularGroup(id);
+          console.log('groupUsersList', groupUsersList);
 
-          setUsers(userList);
+          setGroupUsers(groupUsersList);
+
+          const usersList = await fetchUsers();
+          setUsers(usersList);
         } catch (err) {
           console.error('Error fetching group details:', err); // Log error for debugging
           setError('Failed to fetch group details.');
@@ -90,11 +107,19 @@ const GroupDetailPage = () => {
 
       <h2 className="mt-6 text-2xl font-semibold">Members</h2>
       <ul className="mt-2 space-y-2">
-        {users.length > 0 ? (
-          users.map((user: any) => (
-            <li key={user.id} className="rounded border p-2 shadow-sm">
-              <h3 className="text-lg font-medium">{user.name}</h3>
-            </li>
+        {groupUsers.length > 0 ? (
+          groupUsers.map((user: any) => (
+            <div key={user.id} className="rounded border p-3 shadow-sm">
+              <div className="flex justify-between">
+                <h3 className="text-lg font-semibold">{user.name}</h3>
+                <Button
+                  variant={'destructive'}
+                  onClick={() => handleUserDelete(group.id, user.id)}
+                >
+                  Remove
+                </Button>
+              </div>
+            </div>
           ))
         ) : (
           <div className="">
@@ -112,13 +137,12 @@ const GroupDetailPage = () => {
                     {users.map((user: any) => (
                       <div
                         key={user.id}
-                        className="flex items-center justify-between"
+                        className="rounded border p-3 shadow-sm"
                       >
-                        <div className="">
-                          <h1>{user.name}</h1>
-                        </div>
-                        <div className="">
+                        <div className="flex justify-between">
+                          <h3 className="text-lg font-semibold">{user.name}</h3>
                           <Button
+                            variant={'destructive'}
                             onClick={() =>
                               handleGroupMembers(group.id, user.id)
                             }
