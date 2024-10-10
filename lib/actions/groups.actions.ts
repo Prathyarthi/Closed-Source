@@ -120,16 +120,15 @@ export const addMembersToGroup = async (groupId: string, userId: string) => {
       },
     });
 
-    const members = await prisma?.group.update({
-      where: {
-        id: groupId,
-      },
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const members = await prisma?.groupMember.create({
       data: {
-        members: {
-          connect: {
-            id: userId,
-          },
-        },
+        groupId: groupId,
+        userId: userId,
+        role: 'MEMBER',
       },
     });
     console.log(members);
@@ -139,4 +138,10 @@ export const addMembersToGroup = async (groupId: string, userId: string) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+export const fetchUserInGroup = async (groupId: string) => {
+  const users = prisma.user.findMany({});
+  revalidatePath('/groups');
+  return users;
 };

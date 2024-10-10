@@ -222,3 +222,32 @@ export const assignGroupToProject = async (
     throw new Error('Failed to assign group to project');
   }
 };
+
+export const removeGroupFromProject = async (
+  groupId: string,
+  projectId: string,
+) => {
+  try {
+    const project = await prisma.project.findUnique({
+      where: {
+        id: projectId,
+      },
+    });
+
+    if (!project) {
+      throw new Error('Project not found');
+    }
+
+    await prisma.project.update({
+      where: {
+        id: projectId,
+      },
+      data: {
+        groupId: null,
+      },
+    });
+    revalidatePath('/groups');
+  } catch (error) {
+    console.log(error);
+  }
+};

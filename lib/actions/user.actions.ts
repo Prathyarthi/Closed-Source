@@ -10,10 +10,19 @@ export async function getUser() {
   return parseStringify(user);
 }
 
-export const fetchUsers = async () => {
+export const fetchUsersOfParticularGroup = async (groupId: string) => {
   try {
-    const users = await prisma?.user.findMany();
-    // console.log(users);
+    const users = await prisma?.user.findMany({
+      where: {
+        groups: {
+          some: {
+            groupId: groupId,
+          },
+        },
+      },
+    });
+    // console.log('usersOfGroup', users);
+    revalidatePath('/groups');
     return users;
   } catch (error) {
     console.log(error);

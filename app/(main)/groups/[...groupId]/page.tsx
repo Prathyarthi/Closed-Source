@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { addMembersToGroup, getGroupById } from '@/lib/actions/groups.actions'; // Ensure this function fetches group details
 import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { fetchUsers } from '@/lib/actions/user.actions';
+import { fetchUsersOfParticularGroup } from '@/lib/actions/user.actions';
 import {
   Dialog,
   DialogContent,
@@ -22,6 +22,7 @@ const GroupDetailPage = () => {
   // console.log(id);
 
   const [group, setGroup] = useState<any>(null);
+
   const [users, setUsers] = useState<any>(null);
   // const [members, setMembers] = useState<any>(null);
   const [loading, setLoading] = useState<Boolean>(true);
@@ -48,7 +49,9 @@ const GroupDetailPage = () => {
           console.log('Fetched group details:', groupDetails); // Debugging
           setGroup(groupDetails);
 
-          const userList = await fetchUsers();
+          const userList = await fetchUsersOfParticularGroup(id);
+          console.log('userList', userList);
+
           setUsers(userList);
         } catch (err) {
           console.error('Error fetching group details:', err); // Log error for debugging
@@ -87,24 +90,15 @@ const GroupDetailPage = () => {
 
       <h2 className="mt-6 text-2xl font-semibold">Members</h2>
       <ul className="mt-2 space-y-2">
-        {group.members.length > 0 ? (
-          group.members.map((member: any) => (
-            <li key={member.id} className="rounded border p-2 shadow-sm">
-              <h3 className="text-lg font-medium">{member.name}</h3>
-              <p className="text-sm text-gray-500">{member.description}</p>
+        {users.length > 0 ? (
+          users.map((user: any) => (
+            <li key={user.id} className="rounded border p-2 shadow-sm">
+              <h3 className="text-lg font-medium">{user.name}</h3>
             </li>
           ))
         ) : (
           <div className="">
             <li>No Members Associated...</li>
-            {/* <Button
-              variant={'default'}
-              onClick={() => {
-                handleGroupMembers();
-              }}
-            >
-              Add Members
-            </Button> */}
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="flex items-center">
@@ -116,7 +110,10 @@ const GroupDetailPage = () => {
                   <DialogTitle>Add members to group</DialogTitle>
                   <DialogDescription className="space-y-2">
                     {users.map((user: any) => (
-                      <div className="flex items-center justify-between">
+                      <div
+                        key={user.id}
+                        className="flex items-center justify-between"
+                      >
                         <div className="">
                           <h1>{user.name}</h1>
                         </div>
