@@ -19,6 +19,26 @@ export async function fetchProjects() {
   }
 }
 
+export async function fetchProjectsByMaintainerId(maintainerId: string) {
+  try {
+    const projects = await prisma.project.findMany({
+      where: {
+        maintainerId
+      }
+    })
+
+    if (!projects) {
+      throw new Error('Projects not found')
+    }
+
+    console.log(projects);
+    
+    return projects
+  } catch (error) {
+    console.error('Error fetching projects:', error);
+    throw new Error('Failed to fetch project');
+  }
+}
 export async function createProject(name: string, description: string) {
   try {
     const session = await getServerSession(authOptions);

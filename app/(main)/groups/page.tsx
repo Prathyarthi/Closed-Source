@@ -14,14 +14,30 @@ import {
 import { Input } from '@/components/ui/input';
 import { createGroup, fetchGroups } from '@/lib/actions/groups.actions';
 import { useRouter } from 'next/navigation';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+import { useSession } from 'next-auth/react';
+import { fetchProjectsByMaintainerId } from '@/lib/actions/projects.action';
+
 
 function Groups() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [groups, setGroups] = useState<any>([]);
+
+  const [selectedGroup, setSelectedGroup] = useState<any>(null);
+  const [projects, setProjects] = useState<any>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const router = useRouter();
+
+  const session = useSession();
 
   const handleCreateGroup = async () => {
     await createGroup(name, description);
@@ -36,9 +52,19 @@ function Groups() {
     const res = await fetchGroups();
     setGroups(res);
   };
+
+  const fetchProjects = async () => {
+    const maintainerId = session.data?.user?.id;
+    if (maintainerId) {
+      const maintainerProjects = await fetchProjectsByMaintainerId(maintainerId);
+      setProjects(maintainerProjects);
+    }
+  }
+
   useEffect(() => {
     handleFetchGroups();
   }, []);
+
   return (
     <div className="mx-auto flex h-auto max-w-6xl flex-col justify-between">
       <div className="flex w-full justify-between">
@@ -92,9 +118,40 @@ function Groups() {
                         {group.maintainer.name}
                       </span>
                     </h1>
-                    <Button onClick={() => router.push(`/groups/${group.id}`)}>
-                      View
-                    </Button>
+                    <div className='flex space-x-4'>
+                      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button>Assign Project</Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Assign Project</DialogTitle>
+                            <DialogDescription className="space-y-4">
+                              <Select value={selectedGroup} onValueChange={(value) => setSelectedGroup(value)}>
+                                <SelectTrigger className="w-[380px]">
+                                  <SelectValue placeholder="Select a Project" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {projects.length > 0 ? (
+                                    projects.map((project: any) => (
+                                      <SelectItem key={project.id} value={project.id}>
+                                        {project.name}
+                                      </SelectItem>
+                                    ))
+                                  ) : (
+                                    <SelectItem value="none">No Projects Available</SelectItem>
+                                  )}
+                                </SelectContent>
+                              </Select>
+                              <Button onClick={handleAssignProject}>Assign</Button>
+                            </DialogDescription>
+                          </DialogHeader>
+                        </DialogContent>
+                      </Dialog>
+                      <Button onClick={() => router.push(`/groups/${group.id}`)}>
+                        View
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}

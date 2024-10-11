@@ -132,13 +132,13 @@ function Projects() {
                   <p className="text-sm">{project.description}</p>
                   <div>
                     <h1 className="text-sm">
-                      created by{' '}
+                      created by
                       <span className="ml-2 text-muted-foreground">
                         {project.maintainer.name}
                       </span>
                     </h1>
                   </div>
-                  <div>
+                  {/* <div>
                     <Dialog
                       onOpenChange={(open) => {
                         if (!open) setCurrentProjectId(null);
@@ -214,7 +214,8 @@ function Projects() {
                         </DialogDescription>
                       </DialogContent>
                     </Dialog>
-                  </div>
+                  </div> */}
+                  <Button onClick={() => router.push(`/projects/${project.id}`)}>View</Button>
                 </div>
               ))}
             </div>
