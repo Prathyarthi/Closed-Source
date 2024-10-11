@@ -23,17 +23,17 @@ export async function fetchProjectsByMaintainerId(maintainerId: string) {
   try {
     const projects = await prisma.project.findMany({
       where: {
-        maintainerId
-      }
-    })
+        maintainerId,
+      },
+    });
 
     if (!projects) {
-      throw new Error('Projects not found')
+      throw new Error('Projects not found');
     }
 
     console.log(projects);
-    
-    return projects
+
+    return projects;
   } catch (error) {
     console.error('Error fetching projects:', error);
     throw new Error('Failed to fetch project');

@@ -20,11 +20,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from '@/components/ui/select';
 
 import { useSession } from 'next-auth/react';
 import { fetchProjectsByMaintainerId } from '@/lib/actions/projects.action';
-
 
 function Groups() {
   const [name, setName] = useState('');
@@ -56,10 +55,11 @@ function Groups() {
   const fetchProjects = async () => {
     const maintainerId = session.data?.user?.id;
     if (maintainerId) {
-      const maintainerProjects = await fetchProjectsByMaintainerId(maintainerId);
+      const maintainerProjects =
+        await fetchProjectsByMaintainerId(maintainerId);
       setProjects(maintainerProjects);
     }
-  }
+  };
 
   useEffect(() => {
     handleFetchGroups();
@@ -118,8 +118,11 @@ function Groups() {
                         {group.maintainer.name}
                       </span>
                     </h1>
-                    <div className='flex space-x-4'>
-                      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <div className="flex space-x-4">
+                      <Dialog
+                        open={isDialogOpen}
+                        onOpenChange={setIsDialogOpen}
+                      >
                         <DialogTrigger asChild>
                           <Button>Assign Project</Button>
                         </DialogTrigger>
@@ -127,28 +130,42 @@ function Groups() {
                           <DialogHeader>
                             <DialogTitle>Assign Project</DialogTitle>
                             <DialogDescription className="space-y-4">
-                              <Select value={selectedGroup} onValueChange={(value) => setSelectedGroup(value)}>
+                              <Select
+                                value={selectedGroup}
+                                onValueChange={(value) =>
+                                  setSelectedGroup(value)
+                                }
+                              >
                                 <SelectTrigger className="w-[380px]">
                                   <SelectValue placeholder="Select a Project" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {projects.length > 0 ? (
                                     projects.map((project: any) => (
-                                      <SelectItem key={project.id} value={project.id}>
+                                      <SelectItem
+                                        key={project.id}
+                                        value={project.id}
+                                      >
                                         {project.name}
                                       </SelectItem>
                                     ))
                                   ) : (
-                                    <SelectItem value="none">No Projects Available</SelectItem>
+                                    <SelectItem value="none">
+                                      No Projects Available
+                                    </SelectItem>
                                   )}
                                 </SelectContent>
                               </Select>
-                              <Button onClick={handleAssignProject}>Assign</Button>
+                              <Button onClick={handleAssignProject}>
+                                Assign
+                              </Button>
                             </DialogDescription>
                           </DialogHeader>
                         </DialogContent>
                       </Dialog>
-                      <Button onClick={() => router.push(`/groups/${group.id}`)}>
+                      <Button
+                        onClick={() => router.push(`/groups/${group.id}`)}
+                      >
                         View
                       </Button>
                     </div>

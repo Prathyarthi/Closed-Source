@@ -215,7 +215,11 @@ function Projects() {
                       </DialogContent>
                     </Dialog>
                   </div> */}
-                  <Button onClick={() => router.push(`/projects/${project.id}`)}>View</Button>
+                  <Button
+                    onClick={() => router.push(`/projects/${project.id}`)}
+                  >
+                    View
+                  </Button>
                 </div>
               ))}
             </div>
