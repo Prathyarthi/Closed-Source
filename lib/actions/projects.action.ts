@@ -209,13 +209,10 @@ export async function fetchReviewers(projectId: string) {
     throw new Error('Failed to fetch reviewers');
   }
 }
-export const assignGroupToProject = async (
+export const assignProjectToGroup = async (
   groupId: string,
   projectId: string,
 ) => {
-  // console.log(projectId);
-  // console.log(groupId);
-
   try {
     const project = await prisma.project.findUnique({
       where: {
@@ -236,38 +233,10 @@ export const assignGroupToProject = async (
       },
     });
 
+    revalidatePath('/groups');
     return updatedProject;
   } catch (error) {
     console.error('Error assigning group to project:', error);
     throw new Error('Failed to assign group to project');
-  }
-};
-
-export const removeGroupFromProject = async (
-  groupId: string,
-  projectId: string,
-) => {
-  try {
-    const project = await prisma.project.findUnique({
-      where: {
-        id: projectId,
-      },
-    });
-
-    if (!project) {
-      throw new Error('Project not found');
-    }
-
-    await prisma.project.update({
-      where: {
-        id: projectId,
-      },
-      data: {
-        groupId: null,
-      },
-    });
-    revalidatePath('/groups');
-  } catch (error) {
-    console.log(error);
   }
 };

@@ -60,7 +60,6 @@ export async function getGroupById(groupId: string) {
         projects: true,
       },
     });
-    // console.log(group);
 
     if (!group) {
       throw new Error('Group not found');

@@ -23,7 +23,10 @@ import {
 } from '@/components/ui/select';
 
 import { useSession } from 'next-auth/react';
-import { fetchProjectsByMaintainerId } from '@/lib/actions/projects.action';
+import {
+  assignProjectToGroup,
+  fetchProjectsByMaintainerId,
+} from '@/lib/actions/projects.action';
 
 function Groups() {
   const [name, setName] = useState('');
@@ -31,8 +34,13 @@ function Groups() {
   const [groups, setGroups] = useState<any>([]);
 
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
+  const [selectedProject, setSelectedProject] = useState<any>(null);
   const [projects, setProjects] = useState<any>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
+  const [assignedProjectId, setAssignedProjectId] = useState<string | null>(
+    null,
+  );
 
   const router = useRouter();
 
@@ -53,17 +61,56 @@ function Groups() {
   };
 
   const fetchProjects = async () => {
-    const maintainerId = session.data?.user?.id;
+    const maintainerId = session.data?.user.id;
+
     if (maintainerId) {
       const maintainerProjects =
         await fetchProjectsByMaintainerId(maintainerId);
+      console.log(maintainerProjects);
+
       setProjects(maintainerProjects);
     }
   };
 
+  const handleAssignProject = async () => {
+    if (selectedGroup && selectedProject) {
+      await assignProjectToGroup(selectedGroup, selectedProject);
+      setGroups((prevGroups: any) =>
+        prevGroups.map((group: any) =>
+          group.id === selectedGroup
+            ? { ...group, assignedProjectId: selectedProject }
+            : group,
+        ),
+      );
+      setAssignedProjectId(selectedProject);
+      setIsAssignDialogOpen(false);
+    }
+  };
+
+  const handleRemoveAssignedProject = async () => {
+    if (selectedGroup) {
+      await assignProjectToGroup(selectedGroup, '');
+      setGroups((prevGroups: any) =>
+        prevGroups.map((group: any) =>
+          group.id === selectedGroup
+            ? { ...group, assignedProjectId: null }
+            : group,
+        ),
+      );
+      setIsAssignDialogOpen(false);
+    }
+  };
+
   useEffect(() => {
-    handleFetchGroups();
-  }, []);
+    const fetchData = async () => {
+      if (session.status === 'authenticated') {
+        await handleFetchGroups();
+        await fetchProjects();
+      }
+    };
+
+    fetchData();
+  }, [session.status]);
 
   return (
     <div className="mx-auto flex h-auto max-w-6xl flex-col justify-between">
@@ -119,50 +166,66 @@ function Groups() {
                       </span>
                     </h1>
                     <div className="flex space-x-4">
-                      <Dialog
-                        open={isDialogOpen}
-                        onOpenChange={setIsDialogOpen}
-                      >
-                        <DialogTrigger asChild>
-                          <Button>Assign Project</Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Assign Project</DialogTitle>
-                            <DialogDescription className="space-y-4">
-                              <Select
-                                value={selectedGroup}
-                                onValueChange={(value) =>
-                                  setSelectedGroup(value)
-                                }
-                              >
-                                <SelectTrigger className="w-[380px]">
-                                  <SelectValue placeholder="Select a Project" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {projects.length > 0 ? (
-                                    projects.map((project: any) => (
-                                      <SelectItem
-                                        key={project.id}
-                                        value={project.id}
-                                      >
-                                        {project.name}
-                                      </SelectItem>
-                                    ))
-                                  ) : (
-                                    <SelectItem value="none">
-                                      No Projects Available
-                                    </SelectItem>
-                                  )}
-                                </SelectContent>
-                              </Select>
-                              <Button onClick={handleAssignProject}>
-                                Assign
-                              </Button>
-                            </DialogDescription>
-                          </DialogHeader>
-                        </DialogContent>
-                      </Dialog>
+                      {session.data?.user.id === group.maintainer.id && (
+                        <>
+                          {!group.assignedProjectId ? (
+                            <Dialog
+                              open={isAssignDialogOpen}
+                              onOpenChange={setIsAssignDialogOpen}
+                            >
+                              <DialogTrigger asChild>
+                                <Button
+                                  onClick={() => {
+                                    setSelectedGroup(group.id);
+                                  }}
+                                >
+                                  Assign Project
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Assign Project</DialogTitle>
+                                  <DialogDescription className="space-y-4">
+                                    <Select
+                                      value={selectedProject}
+                                      onValueChange={(value) =>
+                                        setSelectedProject(value)
+                                      }
+                                    >
+                                      <SelectTrigger className="w-[380px]">
+                                        <SelectValue placeholder="Select a Project" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {projects.length > 0 ? (
+                                          projects.map((project: any) => (
+                                            <SelectItem
+                                              key={project.id}
+                                              value={project.id}
+                                            >
+                                              {project.name}
+                                            </SelectItem>
+                                          ))
+                                        ) : (
+                                          <SelectItem value="none">
+                                            No Projects Available
+                                          </SelectItem>
+                                        )}
+                                      </SelectContent>
+                                    </Select>
+                                    <Button onClick={handleAssignProject}>
+                                      Assign
+                                    </Button>
+                                  </DialogDescription>
+                                </DialogHeader>
+                              </DialogContent>
+                            </Dialog>
+                          ) : (
+                            <Button onClick={handleRemoveAssignedProject}>
+                              Remove Project
+                            </Button>
+                          )}
+                        </>
+                      )}
                       <Button
                         onClick={() => router.push(`/groups/${group.id}`)}
                       >
