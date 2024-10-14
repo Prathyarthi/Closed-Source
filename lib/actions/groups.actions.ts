@@ -10,7 +10,18 @@ export async function fetchGroups() {
   try {
     const groups = await prisma.group.findMany({
       include: {
-        maintainer: true,
+        maintainer: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        projects: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
 

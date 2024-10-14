@@ -57,13 +57,14 @@ model Reviewer {
 }
 
 model Group {
-  id           String        @id @default(uuid())
-  name         String
-  description  String
-  members      GroupMember[]
-  projects     Project[]
-  maintainerId String
-  maintainer   User          @relation(fields: [maintainerId], references: [id], onDelete: Cascade)
+  id                String        @id @default(uuid())
+  name              String
+  description       String
+  members           GroupMember[]
+  projects          Project[]
+  assignedProjectId String?
+  maintainerId      String
+  maintainer        User          @relation(fields: [maintainerId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
