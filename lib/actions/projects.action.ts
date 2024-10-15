@@ -266,40 +266,6 @@ export async function fetchReviewers(projectId: string) {
 //   }
 // };
 
-// export const assignProjectToGroup = async (
-//   groupId: string,
-//   projectId: string,
-// ) => {
-//   console.log(groupId);
-//   console.log(projectId);
-
-//   try {
-//     const group = await prisma.group.findUnique({
-//       where: { id: groupId },
-//     });
-
-//     if (!group) {
-//       throw new Error(`Group with ID ${groupId} not found.`);
-//     }
-
-//     const updatedGroup = await prisma.group.update({
-//       where: { id: groupId },
-//       data: {
-//         assignedProjectId: projectId,
-//         projects: {
-//           connect: { id: projectId },
-//         },
-//       },
-//     });
-
-//     revalidatePath('/groups');
-//     return updatedGroup;
-//   } catch (error) {
-//     console.error('Error assigning project to group:', error);
-//     throw new Error('Failed to assign project to group');
-//   }
-// };
-
 export const assignProjectToGroup = async (
   groupId: string,
   projectId: string,
@@ -316,26 +282,77 @@ export const assignProjectToGroup = async (
       throw new Error(`Group with ID ${groupId} not found.`);
     }
 
-    // Update the group to associate it with the project
+    const project = await prisma.project.findUnique({
+      where: { id: projectId },
+    });
+
+    if (!project) {
+      throw new Error(`Project with ID ${projectId} not found.`);
+    }
+
     const updatedGroup = await prisma.group.update({
       where: { id: groupId },
       data: {
-        // Remove assignedProjectId if it's not part of your schema
-        projects: {
-          connect: { id: projectId }, // Connect the project to the group
+        project: {
+          connect: { id: projectId },
         },
       },
     });
 
-    // Revalidate path if necessary (assuming you are using ISR or caching)
-    revalidatePath('/groups');
+    await prisma.project.update({
+      where: { id: projectId },
+      data: {
+        // group: {
+        //   connect: { id: groupId },
+        // },
+        groupId: groupId,
+      },
+    });
 
+    revalidatePath('/groups');
     return updatedGroup;
   } catch (error) {
     console.error('Error assigning project to group:', error);
     throw new Error('Failed to assign project to group');
   }
 };
+
+// export const assignProjectToGroup = async (
+//   groupId: string,
+//   projectId: string,
+// ) => {
+//   console.log(groupId);
+//   console.log(projectId);
+
+//   try {
+//     const group = await prisma.group.findUnique({
+//       where: { id: groupId },
+//     });
+
+//     if (!group) {
+//       throw new Error(`Group with ID ${groupId} not found.`);
+//     }
+
+//     // Update the group to associate it with the project
+//     const updatedGroup = await prisma.group.update({
+//       where: { id: groupId },
+//       data: {
+//         // Remove assignedProjectId if it's not part of your schema
+//         projects: {
+//           connect: { id: projectId }, // Connect the project to the group
+//         },
+//       },
+//     });
+
+//     // Revalidate path if necessary (assuming you are using ISR or caching)
+//     revalidatePath('/groups');
+
+//     return updatedGroup;
+//   } catch (error) {
+//     console.error('Error assigning project to group:', error);
+//     throw new Error('Failed to assign project to group');
+//   }
+// };
 
 export const removeProjectFromGroup = async (
   groupId: string,
@@ -359,9 +376,17 @@ export const removeProjectFromGroup = async (
     const updatedGroup = await prisma.group.update({
       where: { id: groupId },
       data: {
-        projects: {
+        project: {
           disconnect: { id: projectId }, // Disconnect the project from the group
         },
+      },
+    });
+
+    // Update the project to remove the group
+    await prisma.project.update({
+      where: { id: projectId },
+      data: {
+        groupId: null,
       },
     });
 
@@ -372,5 +397,25 @@ export const removeProjectFromGroup = async (
   } catch (error) {
     console.error('Error removing project from group:', error);
     throw new Error('Failed to remove project from group');
+  }
+};
+
+export const fetchassignedProjects = async (groupId: string) => {
+  try {
+    const project = await prisma.group.findUnique({
+      where: { id: groupId },
+      select: {
+        project: true,
+      },
+    });
+
+    if (!project) {
+      throw new Error(`Group with ID ${groupId} not found.`);
+    }
+
+    return project;
+  } catch (error) {
+    console.error('Error fetching projects:', error);
+    throw new Error('Failed to fetch projects');
   }
 };

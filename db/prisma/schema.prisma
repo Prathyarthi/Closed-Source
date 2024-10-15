@@ -32,12 +32,26 @@ model User {
   Reviewer  Reviewer[]
 }
 
+model Group {
+  id           String        @id @default(uuid())
+  name         String
+  description  String
+  members      GroupMember[]
+  project      Project?      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId    String?       @unique
+  maintainerId String
+  maintainer   User          @relation(fields: [maintainerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Project {
   id           String     @id @default(uuid())
   name         String
   description  String
-  groupId      String?
-  group        Group?     @relation(fields: [groupId], references: [id])
+  groupId      String?    @unique
+  group        Group?
   maintainerId String
   maintainer   User       @relation(fields: [maintainerId], references: [id])
   reviewers    Reviewer[]
@@ -51,20 +65,6 @@ model Reviewer {
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   projectId String
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Group {
-  id                String        @id @default(uuid())
-  name              String
-  description       String
-  members           GroupMember[]
-  projects          Project[]
-  assignedProjectId String?
-  maintainerId      String
-  maintainer        User          @relation(fields: [maintainerId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

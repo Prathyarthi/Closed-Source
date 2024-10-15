@@ -4,26 +4,24 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/options';
 import prisma from '@/db';
 import { getServerSession } from 'next-auth';
 import { revalidatePath } from 'next/cache';
-import { use } from 'react';
 
 export async function fetchGroups() {
   try {
     const groups = await prisma.group.findMany({
-      include: {
-        maintainer: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        projects: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        maintainer: true,
+        project: true,
+        projectId: true,
+        members: true,
+      },
+      orderBy: {
+        name: 'asc',
       },
     });
+    console.log(groups);
 
     return groups;
   } catch (error) {
@@ -33,6 +31,8 @@ export async function fetchGroups() {
 }
 
 export async function createGroup(name: string, description: string) {
+  console.log(name, description);
+
   try {
     // Need to pass authOptions while accessing a getServerSession refered : "https://next-auth.js.org/configuration/nextjs#getserversession"
     const session = await getServerSession(authOptions);
@@ -68,7 +68,7 @@ export async function getGroupById(groupId: string) {
         name: true,
         maintainer: true,
         members: true,
-        projects: true,
+        project: true,
       },
     });
 
