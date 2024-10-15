@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { addMembersToGroup, getGroupById } from '@/lib/actions/groups.actions'; // Ensure this function fetches group details
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   fetchUsers,
@@ -20,9 +20,9 @@ import {
 
 const GroupDetailPage = () => {
   const params = useParams();
-  // console.log(params?.groupId[0]);
   const id = params?.groupId[0];
-  // console.log(id);
+
+  const router = useRouter();
 
   const [group, setGroup] = useState<any>(null);
 
@@ -134,24 +134,28 @@ const GroupDetailPage = () => {
                 <DialogHeader>
                   <DialogTitle>Add members to group</DialogTitle>
                   <DialogDescription className="space-y-2">
-                    {users.map((user: any) => (
-                      <div
-                        key={user.id}
-                        className="rounded border p-3 shadow-sm"
-                      >
-                        <div className="flex justify-between">
-                          <h3 className="text-lg font-semibold">{user.name}</h3>
-                          <Button
-                            variant={'destructive'}
-                            onClick={() =>
-                              handleGroupMembers(group.id, user.id)
-                            }
-                          >
-                            Add
-                          </Button>
+                    {users
+                      .filter((user: any) => user.id !== group.maintainer.id)
+                      .map((user: any) => (
+                        <div
+                          key={user.id}
+                          className="rounded border p-3 shadow-sm"
+                        >
+                          <div className="flex justify-between">
+                            <h3 className="text-lg font-semibold">
+                              {user.name}
+                            </h3>
+                            <Button
+                              variant={'destructive'}
+                              onClick={() =>
+                                handleGroupMembers(group.id, user.id)
+                              }
+                            >
+                              Add
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </DialogDescription>
                 </DialogHeader>
               </DialogContent>
@@ -162,25 +166,20 @@ const GroupDetailPage = () => {
 
       <h2 className="mt-6 text-2xl font-semibold">Associated Projects</h2>
       <ul className="mt-2 space-y-2">
-        {group.projects.length > 0 ? (
-          group.projects.map((project: any) => (
-            <li key={project.id} className="rounded border p-2 shadow-sm">
-              <h3 className="text-lg font-medium">{project.name}</h3>
-              <p className="text-sm text-gray-500">{project.description}</p>
-            </li>
-          ))
+        {group.project ? (
+          <li key={group.project.id} className="rounded border p-2 shadow-sm">
+            <h3 className="text-lg font-medium">{group.project.name}</h3>
+            <p className="text-sm text-gray-500">{group.project.description}</p>
+          </li>
         ) : (
           <li>No associated projects...</li>
         )}
       </ul>
 
       <div className="mt-6">
-        <button
-          className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-          // onClick={() => router.back()}
-        >
+        <Button variant={'secondary'} onClick={() => router.back()}>
           Go Back
-        </button>
+        </Button>
       </div>
     </div>
   );

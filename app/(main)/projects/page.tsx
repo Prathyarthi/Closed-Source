@@ -13,10 +13,10 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import {
-  assignGroupToProject,
+  assignProjectToGroup,
   createProject,
   fetchProjects,
-  removeGroupFromProject, // Add action for removing group
+  removeProjectFromGroup, // Add action for removing group
 } from '@/lib/actions/projects.action';
 import { useRouter } from 'next/navigation';
 import { fetchGroups } from '@/lib/actions/groups.actions';
@@ -65,7 +65,7 @@ function Projects() {
       return;
     }
 
-    await assignGroupToProject(groupId, projectId);
+    await assignProjectToGroup(groupId, projectId);
     toast({
       variant: 'default',
       title: 'Group Assigned',
@@ -75,7 +75,7 @@ function Projects() {
   };
 
   const handleRemoveGroup = async (groupId: string, projectId: string) => {
-    await removeGroupFromProject(groupId, projectId);
+    await removeProjectFromGroup(groupId, projectId);
     toast({
       variant: 'default',
       title: 'Group Removed',
@@ -85,8 +85,8 @@ function Projects() {
   };
 
   return (
-    <div className="mx-auto flex h-auto max-w-6xl flex-col justify-between">
-      <div className="flex w-full justify-between">
+    <div className="mx-auto flex h-auto max-w-6xl flex-col py-8">
+      <div className="mb-6 flex w-full justify-between">
         <div>
           <h1 className="text-3xl font-medium text-blue-400">Projects</h1>
         </div>
@@ -117,114 +117,41 @@ function Projects() {
           </DialogContent>
         </Dialog>
       </div>
-      <div className="flex min-h-[70vh] items-center justify-center gap-4">
-        <div>
-          {projects.length === 0 ? (
-            <h1>No projects</h1>
-          ) : (
-            <div className="flex h-auto flex-col items-center justify-center">
-              {projects.map((project: any) => (
-                <div
-                  key={project.id}
-                  className="space-y-3 rounded-lg border px-6 py-3 shadow-md dark:border-white/[0.2] dark:bg-gray-800"
-                >
-                  <h2 className="text-2xl">{project.name}</h2>
-                  <p className="text-sm">{project.description}</p>
-                  <div>
-                    <h1 className="text-sm">
-                      created by
-                      <span className="ml-2 text-muted-foreground">
-                        {project.maintainer.name}
-                      </span>
-                    </h1>
-                  </div>
-                  {/* <div>
-                    <Dialog
-                      onOpenChange={(open) => {
-                        if (!open) setCurrentProjectId(null);
-                      }}
-                    >
-                      {project.groupId ? (
-                        <div className="space-y-2">
-                          <h1 className="text-base">
-                            The group assigned is:{' '}
-                            <span className="text-blue-400">
-                              {groups.find(
-                                (group: any) => group.id === project.groupId,
-                              )?.name || 'Unknown Group'}
-                            </span>
-                          </h1>
-                          <Button
-                            variant="destructive"
-                            onClick={() =>
-                              handleRemoveGroup(project.groupId, project.id)
-                            }
-                          >
-                            Remove Group
-                          </Button>
-                        </div>
-                      ) : (
-                        <DialogTrigger asChild>
-                          <Button
-                            onClick={() => setCurrentProjectId(project.id)} // Set the current project ID before opening the dialog
-                          >
-                            Assign Group
-                          </Button>
-                        </DialogTrigger>
-                      )}
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle className="text-blue-400">
-                            Assign A Group to Project
-                          </DialogTitle>
-                        </DialogHeader>
-                        <DialogDescription>
-                          {groups.map((group: any) => {
-                            const isGroupAssignedToProject =
-                              project.groupId === group.id;
-
-                            return (
-                              <div
-                                key={group.id}
-                                className="flex items-center justify-between space-y-3"
-                              >
-                                <h1 className="text-lg text-foreground">
-                                  {group.name}
-                                </h1>
-                                {!isGroupAssignedToProject ? (
-                                  <Button
-                                    variant={'ghost'}
-                                    onClick={() =>
-                                      handleAssignGroup(
-                                        group.id,
-                                        currentProjectId!,
-                                      )
-                                    }
-                                  >
-                                    Assign
-                                  </Button>
-                                ) : (
-                                  <p className="text-sm text-muted-foreground">
-                                    Group already assigned
-                                  </p>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </DialogDescription>
-                      </DialogContent>
-                    </Dialog>
-                  </div> */}
-                  <Button
-                    onClick={() => router.push(`/projects/${project.id}`)}
-                  >
-                    View
-                  </Button>
+      <div className="grid grid-cols-2 gap-6">
+        {projects.length === 0 ? (
+          <h1>No projects</h1>
+        ) : (
+          projects.map((project: any) => (
+            <div
+              key={project.id}
+              className="flex flex-col justify-between gap-4 rounded-lg border border-gray-600 bg-secondary p-6 transition hover:shadow-lg"
+            >
+              <div className="flex justify-between">
+                <div className="">
+                  <h2 className="mb-2 text-lg font-medium text-primary">
+                    {project.name}
+                  </h2>
+                  <p className="line-clamp-1 max-w-[260px] text-sm text-secondary-foreground/80">
+                    {project.description}
+                  </p>
                 </div>
-              ))}
+                <div>
+                  <h1 className="text-base">
+                    Manintainer :
+                    <span className="text-blue-400">
+                      {project.maintainer.name}
+                    </span>
+                  </h1>
+                </div>
+              </div>
+              <div className="">
+                <Button onClick={() => router.push(`/projects/${project.id}`)}>
+                  View
+                </Button>
+              </div>
             </div>
-          )}
-        </div>
+          ))
+        )}
       </div>
     </div>
   );

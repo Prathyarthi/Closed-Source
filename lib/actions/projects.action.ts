@@ -10,6 +10,9 @@ export async function fetchProjects() {
       include: {
         maintainer: true,
       },
+      orderBy: {
+        name: 'asc',
+      },
     });
 
     return projects;
@@ -291,7 +294,9 @@ export const assignProjectToGroup = async (
     }
 
     const updatedGroup = await prisma.group.update({
-      where: { id: groupId },
+      where: {
+        id: groupId,
+      },
       data: {
         project: {
           connect: { id: projectId },
