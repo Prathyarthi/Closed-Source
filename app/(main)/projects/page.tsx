@@ -21,6 +21,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { fetchGroups } from '@/lib/actions/groups.actions';
 import { useToast } from '@/hooks/use-toast';
+import { Textarea } from '@/components/ui/textarea';
 
 function Projects() {
   const [name, setName] = useState('');
@@ -30,11 +31,15 @@ function Projects() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
 
+  const [repoUrl, setRepoUrl] = useState('');
+  const [techStack, setTechStack] = useState('');
+  const [setupInstructions, setSetupInstructions] = useState('');
+
   const { toast } = useToast();
   const router = useRouter();
 
   const handleCreateProject = async () => {
-    await createProject(name, description);
+    await createProject(name, description, repoUrl, techStack, setupInstructions);
     await handleFetchProjects();
     setIsDialogOpen(false);
     router.push('/projects');
@@ -110,6 +115,21 @@ function Projects() {
                   placeholder="Project Description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                />
+                <Input
+                  placeholder="Github Url"
+                  value={repoUrl}
+                  onChange={(e) => setRepoUrl(e.target.value)}
+                />
+                <Input
+                  placeholder="Tech stack (separated by comma)"
+                  value={techStack}
+                  onChange={(e) => setTechStack(e.target.value)}
+                />
+                <Textarea
+                  placeholder="Instructions for setup"
+                  value={setupInstructions}
+                  onChange={(e) => setSetupInstructions (e.target.value)}
                 />
                 <Button onClick={handleCreateProject}>Create</Button>
               </DialogDescription>
