@@ -42,7 +42,13 @@ export async function fetchProjectsByMaintainerId(maintainerId: string) {
     throw new Error('Failed to fetch project');
   }
 }
-export async function createProject(name: string, description: string, repoUrl: string, technologies: string, setupInstructions: string) {
+export async function createProject(
+  name: string,
+  description: string,
+  repoUrl: string,
+  technologies: string,
+  setupInstructions: string,
+) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -83,7 +89,7 @@ export async function getProjectById(projectId: string) {
         technologies: true,
         setupInstructions: true,
         maintainer: true,
-      }
+      },
     });
 
     if (!project) {
@@ -436,4 +442,3 @@ export const fetchassignedProjects = async (groupId: string) => {
     throw new Error('Failed to fetch projects');
   }
 };
-

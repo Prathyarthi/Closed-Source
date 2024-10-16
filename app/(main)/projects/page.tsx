@@ -39,7 +39,13 @@ function Projects() {
   const router = useRouter();
 
   const handleCreateProject = async () => {
-    await createProject(name, description, repoUrl, techStack, setupInstructions);
+    await createProject(
+      name,
+      description,
+      repoUrl,
+      techStack,
+      setupInstructions,
+    );
     await handleFetchProjects();
     setIsDialogOpen(false);
     router.push('/projects');
@@ -129,7 +135,7 @@ function Projects() {
                 <Textarea
                   placeholder="Instructions for setup"
                   value={setupInstructions}
-                  onChange={(e) => setSetupInstructions (e.target.value)}
+                  onChange={(e) => setSetupInstructions(e.target.value)}
                 />
                 <Button onClick={handleCreateProject}>Create</Button>
               </DialogDescription>
